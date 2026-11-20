@@ -2,7 +2,8 @@ import axios from 'axios'
 import type Categoria from '../models/Categoria'
 
 const api = axios.create({
-  baseURL: 'https://farmacia-jjxo.onrender.com'
+  // URL da API vem do .env (VITE_API_URL); o fallback aponta para o deploy no Render
+  baseURL: import.meta.env.VITE_API_URL || 'https://farmacia-jjxo.onrender.com'
 })
 
 export const listar = async (): Promise<Categoria[]> => {
