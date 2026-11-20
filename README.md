@@ -1,99 +1,117 @@
-# Farmácia — Front-end React
+<div align="center">
 
-Front-end desenvolvido em React para um sistema de gerenciamento de farmácia, com produtos organizados por categoria.
+# 💊 Farmácia do Logan — Front-end
 
-## 🚀 Tecnologias
+Interface em React para gerenciar as categorias de produtos de uma farmácia, consumindo uma API REST em Spring Boot.
 
-- **React** + **Vite**
-- **TypeScript**
-- **Tailwind CSS**
-- **React Router DOM** — roteamento SPA
-- **Axios** — consumo da API REST
-- **ESLint** — padronização de código
+![React](https://img.shields.io/badge/React-19-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white)
+![Axios](https://img.shields.io/badge/Axios-5A29E4?style=for-the-badge&logo=axios&logoColor=white)
 
-## 📋 Funcionalidades
+[![CI](https://github.com/Day-Barbosa/farmacia/actions/workflows/ci.yml/badge.svg)](https://github.com/Day-Barbosa/farmacia/actions/workflows/ci.yml)
+![Status](https://img.shields.io/badge/status-concluído-success)
+![Licença](https://img.shields.io/badge/licença-MIT-blue)
 
-- Navegação entre páginas via React Router (Home, Categorias, Nova Categoria)
-- Listagem de categorias cadastradas
-- Cadastro de novas categorias
-- Edição de categorias existentes
-- Exclusão de categorias (com tela de confirmação)
+**[🌐 Aplicação ao vivo](https://farmacia-omega-eight.vercel.app/)** · **[⚙️ API (farmacia-api)](https://github.com/Day-Barbosa/farmacia-api)**
 
-## 🗂️ Estrutura do projeto
+</div>
 
-```
-src/
-├── assets/
-├── components/
-│   ├── categorias/
-│   │   ├── CardCategoria.tsx
-│   │   ├── DeletarCategoria.tsx
-│   │   ├── FormCategoria.tsx
-│   │   └── ListarCategorias.tsx
-│   ├── footer/
-│   │   └── Footer.tsx
-│   └── navbar/
-│       └── Navbar.tsx
-├── models/
-│   ├── Categoria.ts
-│   └── Produto.ts
-├── pages/
-│   └── home/
-│       └── Home.tsx
-├── services/
-│   └── CategoriaService.ts
-├── App.tsx
-└── main.tsx
+---
+
+<!-- 📸 MÍDIA: grave um GIF curto (home com o hover do Logan → listar categorias → cadastrar → editar → deletar) e salve em docs/demo.gif. Depois troque este comentário por:
+<p align="center"><img src="docs/demo.gif" alt="Demonstração do front da Farmácia" width="800"></p>
+-->
+
+## 💡 Sobre o projeto
+
+Front-end do par **Farmácia** (API + web): permite listar, cadastrar, editar e excluir as **categorias** que organizam os produtos da farmácia, com navegação SPA e uma camada de serviço que isola as chamadas HTTP. Tem um *easter egg*: passe o mouse sobre o nome "Logan" na home. 🐱
+
+## 🏗️ Arquitetura e decisões técnicas
+
+```mermaid
+flowchart LR
+    subgraph SPA["React SPA (Vercel)"]
+        R["React Router<br/>Home · Categorias · Form · Deletar"] --> CP["Componentes de categoria<br/>Listar · Card · Form · Deletar"]
+        CP --> S["CategoriaService.ts<br/>Axios + VITE_API_URL"]
+    end
+    S -- "HTTPS + JSON" --> API["API Spring Boot<br/>(Render)"]
 ```
 
-## 🔌 API
+| Decisão | Por quê |
+|---|---|
+| **`CategoriaService` tipado** | Cada função devolve `Promise<Categoria>` ou `Promise<Categoria[]>`, então os componentes não conhecem detalhes do Axios. |
+| **Mesmo formulário para criar e editar** | `FormCategoria` decide o modo pelo `:id` da rota, sem duplicar tela. |
+| **Exclusão com confirmação** | Rota própria (`/deletarcategoria/:id`) mostra os dados antes de apagar. |
+| **`VITE_API_URL`** | O mesmo código aponta para a API local ou de produção. |
+| **`vercel.json` com rewrite** | Links diretos e F5 em rotas internas funcionam no deploy. |
 
-Este front-end consome a seguinte API REST:
+## ✨ Funcionalidades
 
-```
-https://farmacia-jjxo.onrender.com
-```
+- Navegação SPA com React Router (Home, Categorias, Nova Categoria)
+- Listagem de categorias em cards responsivos
+- Cadastro e edição de categorias no mesmo formulário
+- Exclusão com tela de confirmação
+- Layout com Tailwind CSS
 
-### Endpoints utilizados (Categoria)
-
-| Método | Rota | Descrição |
-|--------|------|-----------|
-| GET | `/categorias` | Lista todas as categorias |
-| GET | `/categorias/{id}` | Busca categoria por ID |
-| GET | `/categorias/nome/{nome}` | Busca categorias por nome |
-| POST | `/categorias` | Cadastra uma nova categoria |
-| PUT | `/categorias` | Atualiza uma categoria existente |
-| DELETE | `/categorias/{id}` | Remove uma categoria |
-
-## 🖥️ Rotas do front-end
+## 🗺️ Rotas
 
 | Rota | Componente | Descrição |
-|------|------------|-----------|
-| `/` | Home | Página inicial |
-| `/categorias` | ListarCategorias | Lista todas as categorias |
-| `/cadastrarCategoria` | FormCategoria | Formulário de cadastro |
-| `/editarcategoria/:id` | FormCategoria | Formulário de edição |
-| `/deletarcategoria/:id` | DeletarCategoria | Confirmação de exclusão |
+|---|---|---|
+| `/` | `Home` | Página inicial |
+| `/categorias` | `ListarCategorias` | Lista as categorias |
+| `/cadastrarCategoria` | `FormCategoria` | Cadastro |
+| `/editarcategoria/:id` | `FormCategoria` | Edição |
+| `/deletarcategoria/:id` | `DeletarCategoria` | Confirmação de exclusão |
 
-## ⚙️ Como rodar o projeto
+## 🚀 Como rodar localmente
+
+**Pré-requisito:** Node.js 20+.
 
 ```bash
-# Clonar o repositório
 git clone https://github.com/Day-Barbosa/farmacia.git
-
-# Entrar na pasta
 cd farmacia
-
-# Instalar as dependências
 npm install
-
-# Rodar em modo desenvolvimento
+cp .env.example .env.local      # opcional: aponta para a API local
 npm run dev
 ```
 
-O projeto ficará disponível em `http://localhost:5173`.
+Abra **http://localhost:5173**. Sem `.env.local`, o front usa a API em produção.
+
+| Script | O que faz |
+|---|---|
+| `npm run dev` | Servidor de desenvolvimento |
+| `npm run build` | Checagem de tipos + build de produção |
+| `npm run lint` | ESLint |
+
+O GitHub Actions roda `lint` e `build` a cada push.
+
+## 📁 Estrutura
+
+```text
+src/
+├── components/
+│   ├── categorias/   # CardCategoria, DeletarCategoria, FormCategoria, ListarCategorias
+│   ├── footer/
+│   └── navbar/
+├── models/           # Categoria, Produto
+├── pages/home/
+└── services/         # CategoriaService (Axios)
+```
+
+## 🗺️ Próximos passos
+
+- [ ] Tela de login e envio do token JWT (a `farmacia-api` exige token para cadastrar, editar e excluir)
+- [ ] CRUD de produtos com filtro por categoria
+- [ ] Feedback visual de sucesso e erro nas operações
 
 ## 👩‍💻 Autora
 
-**Dayana Barbosa**
-Projeto desenvolvido durante o curso Java Fullstack — Generation Brasil.
+**Dayana Barbosa** · [LinkedIn](https://www.linkedin.com/in/dayanabarbosa-devjava/) · [GitHub](https://github.com/Day-Barbosa)
+
+Projeto desenvolvido na formação Java Fullstack da Generation Brasil.
+
+---
+
+<sub>Distribuído sob a licença MIT. Veja [`LICENSE`](LICENSE).</sub>
