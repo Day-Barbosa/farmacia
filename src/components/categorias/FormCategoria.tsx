@@ -13,20 +13,14 @@ function FormCategoria() {
     descricao: ''
   })
 
+  // Busca a categoria quando há um id na rota (modo edição/exclusão)
   useEffect(() => {
-    if (id !== undefined) {
-      buscarPorId(Number(id))
-    }
-  }, [id])
+    if (id === undefined) return
 
-  async function buscarPorId(id: number) {
-    try {
-      const dados = await listarPorId(id)
-      setCategoria(dados)
-    } catch (error) {
-      console.error('Erro ao buscar categoria:', error)
-    }
-  }
+    listarPorId(Number(id))
+      .then(setCategoria)
+      .catch((error) => console.error('Erro ao buscar categoria:', error))
+  }, [id])
 
   function atualizarEstado(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     setCategoria({
